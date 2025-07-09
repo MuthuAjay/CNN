@@ -94,7 +94,7 @@ class VGG(nn.Module):
         self._initialize_weights()
         
         if pretrained:
-            self._load_pretrained_weights(architecture)
+            self._load_pretrained_weights()
         
         
     def _make_layers(self, config: List, input_channels: int, use_batch_norm: bool = False) -> nn.Sequential:
