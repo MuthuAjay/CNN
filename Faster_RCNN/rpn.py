@@ -234,13 +234,13 @@ class RPNLoss(nn.Module):
         # Sample positive anchors
         if num_positive > target_positive:
             positive_indices = torch.where(positive_mask)[0]
-            disable_indices = positive_indices[torch.randperm(num_positive)[target_positive:]]
+            disable_indices = positive_indices[torch.randperm(int(num_positive))[int(target_positive):]]
             labels[disable_indices] = -1
         
         # Sample negative anchors
         if num_negative > target_negative:
             negative_indices = torch.where(negative_mask)[0]
-            disable_indices = negative_indices[torch.randperm(num_negative)[target_negative:]]
+            disable_indices = negative_indices[torch.randperm(int(num_negative))[int(target_negative):]]
             labels[disable_indices] = -1
         
         return labels
@@ -295,9 +295,9 @@ class RPNLoss(nn.Module):
                 total_bbox_loss += bbox_loss
         
         return {
-            'cls_loss': total_cls_loss / batch_size,
-            'bbox_loss': total_bbox_loss / batch_size,
-            'total_loss': (total_cls_loss + total_bbox_loss) / batch_size
+            'cls_loss': torch.tensor(total_cls_loss / batch_size, device=cls_logits.device) if not isinstance(total_cls_loss, torch.Tensor) else total_cls_loss / batch_size,
+            'bbox_loss': torch.tensor(total_bbox_loss / batch_size, device=cls_logits.device) if not isinstance(total_bbox_loss, torch.Tensor) else total_bbox_loss / batch_size,
+            'total_loss': torch.tensor((total_cls_loss + total_bbox_loss) / batch_size, device=cls_logits.device) if not isinstance(total_cls_loss, torch.Tensor) else (total_cls_loss + total_bbox_loss) / batch_size
         }
 
 class RegionProposalNetwork(nn.Module):
